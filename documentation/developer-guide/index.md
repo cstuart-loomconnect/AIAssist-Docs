@@ -32,17 +32,18 @@ flowchart LR
     B --> C[Pull request into development]
     C --> D[Checks and review]
     D --> E[Merge to development]
-    E --> F[Docs site rebuilds]
+    E --> F[Release: merge into master]
+    F --> G[Docs site rebuilds]
 ```
 
 1. Create a `feature/<name>` branch from `development`. Keep it current with `git merge development`.
 2. Change the metadata. Follow [Code patterns](code-patterns.md), and add or update the matching test class ([Testing](testing.md)).
 3. If you add an object or field, add it to the `AIAssistSuperUser` permission set, and to the other sets that need it.
 4. Open a pull request into `development` with a title like `feat: add agent wizard` (see [CI and releases](ci.md)).
-5. After the merge, the documentation site rebuilds from `development` (on the next scheduled build, or straight away if the docs trigger is set up; see [CI and releases](ci.md)).
+5. The documentation site reflects `master`, so your change appears there once `development` is merged into `master` for a release (see [CI and releases](ci.md)).
 
 !!! note "Branches"
-    `development` is the working branch: features merge here and the docs site is built from it. `master` is only the GitHub default branch.
+    `development` is the working branch: features merge here. `master` holds released code, is the GitHub default branch, and is what the docs site is built from.
 
 ## Where to start
 

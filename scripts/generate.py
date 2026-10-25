@@ -10,8 +10,8 @@ cannot go stale:
 The package source lives in a separate repo (AIAssist). Point this script at a clone of it:
   python3 scripts/generate.py ../AIAssist
 or set AIASSIST_PATH. With no argument it looks for ./aiassist (where CI checks it out), then
-../AIAssist. Use a clone with full history (and the development branch checked out) for a
-complete changelog.
+../AIAssist. Use a clone with full history (and the master branch checked out) for a
+complete changelog. AIASSIST_BRANCH (default master) sets the branch named in links and text.
 Uses only the Python standard library (plus git).
 """
 import os
@@ -38,7 +38,7 @@ def find_package_repo():
 ROOT = find_package_repo()
 SOURCE = ROOT / "force-app/main/default"
 GITHUB = "https://github.com/cstuart-loomconnect/AIAssist"
-BRANCH = "development"
+BRANCH = os.environ.get("AIASSIST_BRANCH", "master")
 NS = {"m": "http://soap.sforce.com/2006/04/metadata"}
 
 

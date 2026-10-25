@@ -44,9 +44,9 @@ node ../AIAssist-CICD/scripts/check-naming.js force-app ../AIAssist-CICD/config/
 
 | Branch | Use |
 |---|---|
-| `development` | The main branch. Features merge here, the nightly build targets it and the docs site is built from it. |
+| `development` | The main branch. Features merge here and the nightly build targets it. |
 | `feature/<name>` | One branch per piece of work, created from `development`. |
-| `master` | Release-ready code only, and the GitHub default branch. Merge `development` into it only for a release. |
+| `master` | Release-ready code only, and the GitHub default branch. Merge `development` into it only for a release. The docs site is built from it. |
 
 Scheduled workflows only run from the default branch, so the nightly schedule would only start working once it reaches `master`.
 
@@ -96,7 +96,7 @@ The site is MkDocs Material and lives in its own repository, [AIAssist-Docs](htt
 | `documentation/codebase-health.md` | Checks worked out from the AIAssist source |
 | `documentation/reference/` | Apex, data model and object pages, Lightning web components, permission sets |
 
-`scripts/generate.py` writes them. It reads a clone of AIAssist, so it needs to know where that is: pass the path, set `AIASSIST_PATH`, or keep the two repos side by side. Use a clone with full history and `development` checked out for a complete changelog.
+`scripts/generate.py` writes them. It reads a clone of AIAssist, so it needs to know where that is: pass the path, set `AIASSIST_PATH`, or keep the two repos side by side. Use a clone with full history and `master` checked out for a complete changelog.
 
 ### Run it locally
 
@@ -111,15 +111,15 @@ Use `mkdocs build --strict` to check for broken links: the publish workflow uses
 
 ### How it is published
 
-`deploy.yml` in AIAssist-Docs checks out this repo and AIAssist's `development` branch with full history, runs `generate.py`, then `mkdocs build --strict`, and deploys the `site` folder to GitHub Pages. It runs when:
+`deploy.yml` in AIAssist-Docs checks out this repo and AIAssist's `master` branch with full history, runs `generate.py`, then `mkdocs build --strict`, and deploys the `site` folder to GitHub Pages. It runs when:
 
 - a page in AIAssist-Docs changes on `main`,
-- AIAssist's `development` branch changes, if the docs trigger is set up (below),
+- a pull request is merged into AIAssist's `master`, if the docs trigger is set up (below),
 - every morning at 06:00 UTC, as a fallback,
 - or by hand from the Actions tab.
 
 One-off setup in AIAssist-Docs: **Settings > Pages > Build and deployment > Source = GitHub Actions**.
 
-Optional, for an immediate rebuild after each merge: create a fine-grained personal access token with **Contents: read and write** on AIAssist-Docs only, and save it in AIAssist as the secret `DOCS_DISPATCH_TOKEN`. The `docs-trigger.yml` caller in AIAssist then pings AIAssist-Docs on every push to `development`. Without the secret it does nothing, and the daily build picks up the change.
+For an immediate rebuild after each release merge: create a fine-grained personal access token with **Contents: read and write** on AIAssist-Docs only, and save it in AIAssist as the secret `DOCS_DISPATCH_TOKEN`. The `docs-trigger.yml` caller in AIAssist then pings AIAssist-Docs on every push to `master`. Without the secret it does nothing, and the daily build picks up the change.
 
 To edit a hand-written page, change the file under `documentation/` in AIAssist-Docs and open a `docs:` pull request there. Do not edit generated pages: change the AIAssist source, or `scripts/generate.py`.

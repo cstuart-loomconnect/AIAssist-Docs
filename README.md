@@ -15,7 +15,7 @@ https://cstuart-loomconnect.github.io/AIAssist-Docs/
 
 ## Run it locally
 
-Clone AIAssist next to this repo (with `development` checked out and full history), then:
+Clone AIAssist next to this repo (with `master` checked out and full history), then:
 
 ```bash
 pip install -r scripts/requirements.txt
@@ -28,7 +28,7 @@ mkdocs serve
 ## When it publishes
 
 - Push to `main` here.
-- Push to AIAssist `development`, when AIAssist has the `DOCS_DISPATCH_TOKEN` secret (a fine-grained token with **Contents: read and write** on this repo only).
+- Every merge into AIAssist `master`, when AIAssist has the `DOCS_DISPATCH_TOKEN` secret (a fine-grained token with **Contents: read and write** on this repo only).
 - Daily at 06:00 UTC as a fallback.
 - By hand from the Actions tab.
 
