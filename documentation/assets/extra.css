@@ -1,0 +1,20 @@
+/* Big numbers on the Home page cards */
+.md-typeset .stat { font-size: 2rem; font-weight: 600; color: var(--md-primary-fg-color); display: block; line-height: 1.2; }
+.md-typeset .built-from { font-size: .75rem; color: var(--md-default-fg-color--light); }
+
+/* Changelog type badges */
+.md-typeset .badge { display: inline-block; font-size: .62rem; font-weight: 700; text-transform: uppercase; padding: 0 .5rem; border-radius: .2rem; background: #fff3c4; color: #7a5c00; }
+.md-typeset .badge-feat { background: #dbeafe; color: #1d4ed8; }
+.md-typeset .badge-fix { background: #fee2e2; color: #b91c1c; }
+.md-typeset .badge-perf, .md-typeset .badge-test { background: #dcfce7; color: #166534; }
+.md-typeset .badge-refactor, .md-typeset .badge-style { background: #ede9fe; color: #5b21b6; }
+.md-typeset .badge-docs, .md-typeset .badge-build, .md-typeset .badge-ci, .md-typeset .badge-chore { background: #e5e7eb; color: #374151; }
+[data-md-color-scheme="slate"] .md-typeset .badge { background: #3b3320; color: #f5d97a; }
+[data-md-color-scheme="slate"] .md-typeset .badge-feat { background: #1e3a5f; color: #93c5fd; }
+[data-md-color-scheme="slate"] .md-typeset .badge-fix { background: #5f1e1e; color: #fca5a5; }
+[data-md-color-scheme="slate"] .md-typeset .badge-perf, [data-md-color-scheme="slate"] .md-typeset .badge-test { background: #1e4d2b; color: #86efac; }
+[data-md-color-scheme="slate"] .md-typeset .badge-refactor, [data-md-color-scheme="slate"] .md-typeset .badge-style { background: #3b2a66; color: #c4b5fd; }
+[data-md-color-scheme="slate"] .md-typeset .badge-docs, [data-md-color-scheme="slate"] .md-typeset .badge-build, [data-md-color-scheme="slate"] .md-typeset .badge-ci, [data-md-color-scheme="slate"] .md-typeset .badge-chore { background: #2a2f3a; color: #cbd5e1; }
+
+/* Let wide tables scroll instead of squashing */
+.md-typeset table:not([class]) { font-size: .72rem; }

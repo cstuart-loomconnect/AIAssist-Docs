@@ -1,0 +1,129 @@
+site_name: AI Assist Docs
+site_description: Documentation for the AI Assist Salesforce package
+site_url: https://cstuart-loomconnect.github.io/AIAssist-Docs/
+repo_url: https://github.com/cstuart-loomconnect/AIAssist-Docs
+repo_name: AIAssist-Docs
+edit_uri: edit/main/documentation/
+docs_dir: documentation
+exclude_docs: |
+  _stats.md
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  font:
+    text: Inter
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: false
+  - pymdownx.details
+  - pymdownx.snippets:
+      base_path: documentation
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+validation:
+  nav:
+    omitted_files: ignore
+
+nav:
+  - Home:
+      - index.md
+      - Getting started: home/getting-started.md
+      - Using the chat: home/using-the-chat.md
+      - Changelog: changelog.md
+      - Codebase health: codebase-health.md
+  - Architecture:
+      - architecture/index.md
+      - Message lifecycle: architecture/message-lifecycle.md
+      - Providers: architecture/providers.md
+      - PII protection: architecture/pii-protection.md
+      - Usage limits and throughput: architecture/usage-limits.md
+      - Security model: architecture/security-model.md
+      - Logging and scheduled jobs: architecture/logging-and-jobs.md
+  - Admin Guide:
+      - admin-guide/index.md
+      - Settings: admin-guide/settings.md
+      - AI Agent Models: admin-guide/models.md
+      - Agents and the Agent Wizard: admin-guide/agents.md
+      - AI Tools: admin-guide/ai-tools.md
+      - Prompt templates and slash commands: admin-guide/prompt-templates.md
+      - AI Policies: admin-guide/policies.md
+      - AI PII Registry: admin-guide/pii-registry.md
+  - Developer Guide:
+      - developer-guide/index.md
+      - Code patterns: developer-guide/code-patterns.md
+      - Testing: developer-guide/testing.md
+      - Extending AI Assist: developer-guide/extending.md
+      - CI and releases: developer-guide/ci.md
+  - Reference:
+      - reference/index.md
+      - Apex:
+          - reference/apex/index.md
+          - Messaging pipeline: reference/apex/messaging-pipeline.md
+          - Agent and providers: reference/apex/agent-and-providers.md
+          - Chat window API: reference/apex/chat-window-api.md
+          - Data sources: reference/apex/data-sources.md
+          - Workflow actions: reference/apex/workflow-actions.md
+          - Prompt templates: reference/apex/prompt-templates.md
+          - PII protection: reference/apex/pii-protection.md
+          - Usage and policies: reference/apex/usage-and-policies.md
+          - Admin tabs: reference/apex/admin-tabs.md
+          - Logging and scheduled jobs: reference/apex/logging-and-jobs.md
+          - Trigger handlers: reference/apex/trigger-handlers.md
+          - Foundation: reference/apex/foundation.md
+      - Data model: reference/data-model.md
+      - Lightning Web Components: reference/lwc.md
+      - Permission sets: reference/permission-sets.md
+  - Runbooks:
+      - runbooks/index.md
+      - Known issues: runbooks/known-issues.md
+      - A reply never arrives: runbooks/reply-never-arrives.md
+      - Messages are queued or refused: runbooks/queued-or-refused.md
+      - The maintenance job is not running: runbooks/maintenance-job.md
+      - A PII registry sync failed: runbooks/pii-sync-failed.md
+      - GDPR deletion request: runbooks/gdpr-deletion.md

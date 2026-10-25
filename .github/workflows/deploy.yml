@@ -1,0 +1,55 @@
+name: Documentation site
+
+# Checks out this repo and the AIAssist package source, generates the reference pages, builds the
+# MkDocs site and publishes it to GitHub Pages.
+# One-off setup: Settings > Pages > Build and deployment > Source = GitHub Actions.
+on:
+  push:
+    branches: [main]
+  # Sent by AIAssist's docs-trigger.yml on every push to development (needs DOCS_DISPATCH_TOKEN there).
+  repository_dispatch:
+    types: [aiassist-updated]
+  # Fallback so the reference pages catch up even without the dispatch token.
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  AIASSIST_REPO: cstuart-loomconnect/AIAssist
+  AIASSIST_BRANCH: development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ env.AIASSIST_REPO }}
+          ref: ${{ env.AIASSIST_BRANCH }}
+          path: aiassist
+          fetch-depth: 0 # the changelog and class histories are read from git
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: pip install -r scripts/requirements.txt
+      - run: python3 scripts/generate.py aiassist
+      - run: mkdocs build --strict
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v5
