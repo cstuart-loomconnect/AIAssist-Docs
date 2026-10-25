@@ -4,7 +4,7 @@ This page says what runs on a pull request, where the workflows live, the pull r
 
 ## Where the workflows live
 
-The checks are in their own repository, [AIAssist-CICD](https://github.com/cstuart-loomconnect/AIAssist-CICD), as reusable workflows. AIAssist keeps only small caller workflows in `.github/workflows/` that point at them, pinned to a tag (`@v1`), so a change to CI never lands in the package repo by accident.
+The checks are in their own repository, [AIAssist-CICD](https://github.com/cstuart-loomconnect/AIAssist-CICD), as reusable workflows. AIAssist keeps only small caller workflows in `.github/workflows/` that point at them, pinned to the `v1` release branch (`@v1`), so a change to CI never lands in the package repo by accident.
 
 | Caller in AIAssist | Runs (in AIAssist-CICD) | Trigger |
 |---|---|---|
@@ -32,7 +32,7 @@ Dependabot (`.github/dependabot.yml` in AIAssist) opens weekly update pull reque
 
 ### Changing a check
 
-Open a pull request in AIAssist-CICD. Once it is merged, move the `v1` tag to the new commit; AIAssist picks it up on its next pull request. A breaking change (a new required input or secret) gets a new tag, `v2`, and the callers in AIAssist are updated to match. The AIAssist-CICD README has the steps.
+Open a pull request in AIAssist-CICD. Once it is merged into `main`, fast-forward the `v1` branch to `main`; AIAssist picks it up on its next pull request. A breaking change (a new required input or secret) gets a new branch, `v2`, and the callers in AIAssist are updated to match. The AIAssist-CICD README has the steps.
 
 To run the checks locally, clone AIAssist-CICD next to AIAssist, then from AIAssist:
 
