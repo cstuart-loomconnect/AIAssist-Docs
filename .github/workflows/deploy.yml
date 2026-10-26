@@ -5,7 +5,7 @@ name: Documentation site
 # One-off setup: Settings > Pages > Build and deployment > Source = GitHub Actions.
 on:
   push:
-    branches: [main]
+    branches: [master]
   # Sent by AIAssist's docs-trigger.yml whenever master changes, i.e. every merged PR into master
   # (needs DOCS_DISPATCH_TOKEN there).
   repository_dispatch:

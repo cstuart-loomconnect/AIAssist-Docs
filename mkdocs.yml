@@ -3,7 +3,7 @@ site_description: Documentation for the AI Assist Salesforce package
 site_url: https://cstuart-loomconnect.github.io/AIAssist-Docs/
 repo_url: https://github.com/cstuart-loomconnect/AIAssist-Docs
 repo_name: AIAssist-Docs
-edit_uri: edit/main/documentation/
+edit_uri: edit/master/documentation/
 docs_dir: documentation
 exclude_docs: |
   _stats.md

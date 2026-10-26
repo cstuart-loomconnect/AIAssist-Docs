@@ -4,13 +4,13 @@ This page says what runs on a pull request, where the workflows live, the pull r
 
 ## Where the workflows live
 
-The checks are in their own repository, [AIAssist-CICD](https://github.com/cstuart-loomconnect/AIAssist-CICD), as reusable workflows. AIAssist keeps only small caller workflows in `.github/workflows/` that point at them, pinned to the `v1` release branch (`@v1`), so a change to CI never lands in the package repo by accident.
+The checks are in their own repository, [AIAssist-CICD](https://github.com/cstuart-loomconnect/AIAssist-CICD), as reusable workflows. AIAssist keeps only small caller workflows in `.github/workflows/` that point at them, at AIAssist-CICD's `master` branch (`@master`). `master` there is the released version: anything merged into it is live for AIAssist straight away.
 
 | Caller in AIAssist | Runs (in AIAssist-CICD) | Trigger |
 |---|---|---|
 | `pr-validation.yml` | `pr-validation.yml`, which calls `scratch-org-tests.yml` | Pull request into `development` or `master` |
-| `pr-hygiene.yml` | `pr-hygiene.yml` | Pull request into `development` or `master` (opened, edited, updated) |
-| `nightly.yml` | `nightly.yml`, which calls `scratch-org-tests.yml` | Manual only for now. The schedule is commented out. |
+| `browser-tests.yml` | `scratch-org-tests.yml` with `apex-tests: false` | Pull request with the `e2e` label, or by hand |
+| `weekly-build.yml` | `weekly-build.yml`, which calls `scratch-org-tests.yml` | Manual only for now. The schedule is commented out. |
 
 Each reusable workflow checks out AIAssist at the root and AIAssist-CICD into `.cicd/`, so the scripts and config in AIAssist-CICD run against `force-app`.
 
@@ -32,7 +32,7 @@ Dependabot (`.github/dependabot.yml` in AIAssist) opens weekly update pull reque
 
 ### Changing a check
 
-Open a pull request in AIAssist-CICD. Once it is merged into `main`, fast-forward the `v1` branch to `main`; AIAssist picks it up on its next pull request. A breaking change (a new required input or secret) gets a new branch, `v2`, and the callers in AIAssist are updated to match. The AIAssist-CICD README has the steps.
+Open a pull request in AIAssist-CICD into its `development` branch. To release, merge `development` into `master` there; AIAssist picks it up on its next run. A breaking change (a new required input or secret, a renamed workflow) needs the callers in AIAssist updated in step with that merge. The AIAssist-CICD README has the steps.
 
 To run the checks locally, clone AIAssist-CICD next to AIAssist, then from AIAssist:
 
@@ -44,11 +44,11 @@ node ../AIAssist-CICD/scripts/check-naming.js force-app ../AIAssist-CICD/config/
 
 | Branch | Use |
 |---|---|
-| `development` | The main branch. Features merge here and the nightly build targets it. |
+| `development` | The main branch. Features merge here and the weekly build targets it. |
 | `feature/<name>` | One branch per piece of work, created from `development`. |
 | `master` | Release-ready code only, and the GitHub default branch. Merge `development` into it only for a release. The docs site is built from it. |
 
-Scheduled workflows only run from the default branch, so the nightly schedule would only start working once it reaches `master`.
+Scheduled workflows only run from the default branch, so the weekly build schedule would only start working once it reaches `master`.
 
 ## Pull requests and commits
 
@@ -113,7 +113,7 @@ Use `mkdocs build --strict` to check for broken links: the publish workflow uses
 
 `deploy.yml` in AIAssist-Docs checks out this repo and AIAssist's `master` branch with full history, runs `generate.py`, then `mkdocs build --strict`, and deploys the `site` folder to GitHub Pages. It runs when:
 
-- a page in AIAssist-Docs changes on `main`,
+- a page in AIAssist-Docs changes on `master`,
 - a pull request is merged into AIAssist's `master`, if the docs trigger is set up (below),
 - every morning at 06:00 UTC, as a fallback,
 - or by hand from the Actions tab.
