@@ -17,6 +17,12 @@ Problems that are known and not yet fixed. This page is the record of them: add 
 | [11] | Anthropic Agent API sessions are never deleted at the provider | Open, not started |
 | [12] | Estimate token tracking undercounts what a turn really costs | Open, not started |
 | [13] | The idle timeout is not checked when a message is sent | Open, not started |
+| [14] | GDPR erasure has no tool, and four decisions in the runbook are unresolved | Open, not started |
+| [15] | Text the user types is sent to the provider unmasked | Open, not started |
+| [16] | The usage limits have never been load tested | Open, not started |
+| [17] | Settings allow values the platform cannot honour | Open, not started |
+| [18] | The chat trusts the object name the browser sends | Open, not started |
+| [19] | The utility bar chat loads its context twice on first open | Open, not started |
 
 ## [1] Chat polling costs about 21 SOQL queries per call
 
@@ -240,5 +246,108 @@ Found: 2026-10-25, bug review of `development`.
 | Option | What it means |
 |---|---|
 | a | In `sendMessage`, close a candidate conversation that is past its agent's idle timeout (reason Idle Timeout) and start a new one, the same way the message and token caps are handled. |
+
+**Status:** open, not started.
+
+## [14] GDPR erasure has no tool, and four decisions in the runbook are unresolved
+
+Found: 2026-10-26, phase 1 readiness review.
+
+**What happens**
+
+An erasure request is handled by hand: a Super User runs the Apex in the [GDPR deletion runbook](gdpr-deletion.md) through Execute Anonymous. Nothing records that it was done, the order of deletion depends on the person following the page, and four steps are marked **To confirm**:
+
+1. Who verifies the requester and where the request is logged.
+2. Whether a legal hold overrides an erasure request, and who may untick it.
+3. Whether usage rows, terms acknowledgments and platform logs are deleted, kept or anonymised.
+4. How saved notes, posts and tasks made from the chat are found for a user.
+
+Provider-side sessions ([11]) are also not covered.
+
+**Options**
+
+| Option | What it means |
+|---|---|
+| a | Get a ruling from the data protection lead on the four decisions and write them into the runbook. Needed for phase 1 either way. |
+| b | Add an `AIErasureService` that takes a user Id, deletes in the right order, honours the legal hold rule, and writes an audit `AIPlatformLog__c` entry with counts (never values). |
+
+**Status:** open, not started.
+
+## [15] Text the user types is sent to the provider unmasked
+
+Found: 2026-10-26, phase 1 readiness review.
+
+**What happens**
+
+Only data source results go through `AIPiiPseudonymizationService`. The user's own message, and the earlier messages in the history, are sent to the provider exactly as typed. A user who pastes a customer's name, address, date of birth or account number into the chat sends it to the provider in clear, and for the Anthropic Agent provider it is kept in the provider's session ([11]).
+
+**Options**
+
+| Option | What it means |
+|---|---|
+| a | Record it as a known limitation: tell the data protection lead, and state it in the terms the user accepts. |
+| b | Mask values in typed text that match the open record's PII fields (the real values are known for that record). |
+| c | Add pattern checks for obvious identifiers (email, phone, National Insurance number, sort code and account number) and either mask them or warn before sending. |
+
+**Status:** open, not started.
+
+## [16] The usage limits have never been load tested
+
+Found: 2026-10-26, phase 1 readiness review.
+
+**What happens**
+
+The rate, daily, concurrency, in-flight and pending-job limits are built and unit tested, but nothing has shown they hold at the target of about 200 concurrent users. Polling alone costs about 21 SOQL queries per call ([1]), and `countQueuedMessageJobs` queries `AsyncApexJob` on every send. Whether the org's async queue, concurrent request limit and the providers' rate limits keep up is unknown.
+
+**What to do**
+
+Run a load test in a full sandbox: 200 simulated users, each sending messages and polling as the chat window does, over at least 30 minutes. Record the turn times, failures by reason, async queue depth and org limit use, and keep the results with this issue.
+
+**Status:** open, not started.
+
+## [17] Settings allow values the platform cannot honour
+
+Found: 2026-10-26, phase 1 readiness review.
+
+**What happens**
+
+- `MaxMessagesInFlight__c` accepts up to 9,999, but `MAX_PENDING_PROCESSING_JOBS` refuses new work at 200 queued jobs. Any cap above 200 never holds a message: users get "Service busy" instead of being queued.
+- `ProcessingLockSeconds__c` accepts 30 to 3,600 seconds with no check against how long a turn can take (iterations × callout timeout, plus queue delay). A lock shorter than a turn leads to [4].
+- `MaxToolCallingIterationsCap__c` accepts up to 50, which combined with the callout timeout cannot fit in one transaction ([5]).
+
+**Options**
+
+| Option | What it means |
+|---|---|
+| a | Lower the ranges on the settings page: in-flight at most 200, iterations to a realistic cap. |
+| b | Add cross-field checks: refuse a lock time shorter than the longest possible turn, and warn when iterations × timeout is over 120 seconds. |
+
+**Status:** open, not started.
+
+## [18] The chat trusts the object name the browser sends
+
+Found: 2026-10-26, while tracing how the utility bar finds the page's record.
+
+**What happens**
+
+`AIChatContextService.buildRecordContext` uses the `objectApiName` passed from the browser in preference to the object it describes from the record Id (`String.isNotBlank(objectApiName) ? objectApiName : describedObject`). The agent list and the PII protected flag are then worked out from that name. A changed request could open an Account record with agents meant only for another object, or show the record as not PII protected.
+
+**Fix**
+
+Always use the object described from the record Id, and ignore the browser's value when a record Id is given.
+
+**Status:** open, not started.
+
+## [19] The utility bar chat loads its context twice on first open
+
+Found: 2026-10-26, while tracing how the utility bar finds the page's record.
+
+**What happens**
+
+In the utility bar, `aiAssistChat.connectedCallback` calls `loadContext()` straight away, before the `CurrentPageReference` wire has given it the record. That call goes to `getChatContext` with no record, and the wire then starts a second call with the record. The `loadSequence` counter throws the first answer away, so nothing wrong is shown, but every first open pays for an extra server round trip and may briefly show the no-record state.
+
+**Fix**
+
+In the utility bar, skip the load in `connectedCallback` and let the page reference wire start it.
 
 **Status:** open, not started.
