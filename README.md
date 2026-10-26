@@ -27,7 +27,7 @@ mkdocs serve
 
 ## When it publishes
 
-- Push to `main` here.
+- Push to `master` here.
 - Every merge into AIAssist `master`, when AIAssist has the `DOCS_DISPATCH_TOKEN` secret (a fine-grained token with **Contents: read and write** on this repo only).
 - Daily at 06:00 UTC as a fallback.
 - By hand from the Actions tab.
